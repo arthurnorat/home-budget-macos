@@ -8,12 +8,19 @@
 
 /* Begin PBXFileReference section */
 		E0E61121301537E700642050 /* HomeBudget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HomeBudget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0E6113A3015478600642050 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		E0E6113D3015478600642050 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E0E61123301537E700642050 /* HomeBudget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HomeBudget;
+			sourceTree = "<group>";
+		};
+		E0E6113C3015478600642050 /* docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docs;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +39,9 @@
 		E0E61118301537E700642050 = {
 			isa = PBXGroup;
 			children = (
+				E0E6113A3015478600642050 /* CLAUDE.md */,
+				E0E6113C3015478600642050 /* docs */,
+				E0E6113D3015478600642050 /* README.md */,
 				E0E61123301537E700642050 /* HomeBudget */,
 				E0E61122301537E700642050 /* Products */,
 			);
