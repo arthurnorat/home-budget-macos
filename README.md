@@ -17,7 +17,6 @@ Unlike the iOS and Android companion apps, which only support quick expense entr
 - Browse expenses month by month *(in development)*
 - Create, edit, and delete expenses *(in development)*
 - Monthly income and 50/30/20 budget summary *(in development)*
-- Import fixed expenses from the previous month *(planned)*
 - Consolidate selected expenses *(planned)*
 
 ## Tech Stack
@@ -49,7 +48,6 @@ Diferente dos apps companheiros iOS e Android, que servem apenas para lançament
 - Navegar pelos gastos mês a mês *(em desenvolvimento)*
 - Criar, editar e excluir gastos *(em desenvolvimento)*
 - Renda mensal e resumo de orçamento 50/30/20 *(em desenvolvimento)*
-- Importar gastos fixos do mês anterior *(planejado)*
 - Consolidar gastos selecionados *(planejado)*
 
 ## Tecnologias

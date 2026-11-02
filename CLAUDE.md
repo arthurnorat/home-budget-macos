@@ -2,7 +2,7 @@
 
 ## Contexto do Projeto
 
-App de controle de gastos domésticos compartilhado entre dois usuários. O sistema completo (backend em produção no Render + Neon, frontend web no Vercel) é a fonte de verdade para controle e análise financeira.
+App de controle de gastos domésticos compartilhado entre dois usuários. O sistema completo (backend em produção no Google Cloud Run + Firestore, frontend web no Vercel) é a fonte de verdade para controle e análise financeira.
 
 **Este é o cliente principal de análise do sistema.** Ao contrário do iOS e do Android — que existem só para lançamento rápido do gasto do dia a dia, sem navegação por mês nem edição — o macOS é onde o orçamento é efetivamente **analisado, organizado, estudado e planejado**. Por isso, num primeiro momento, sua interface espelha a versão web (mesmo modelo de dados, mesmas funcionalidades de controle), e depois cresce com funcionalidades de análise que a web ainda não tem.
 
@@ -31,8 +31,7 @@ Interface densa em informação, pensada para quem vai passar tempo estudando o 
 2. Listar gastos do mês, com filtro por categoria (Todos/Fixo/Variável)
 3. Criar, editar e excluir gasto
 4. Ver e editar a renda mensal, com resumo de metas 50/30/20 vs. totais reais por categoria
-5. Importar gastos fixos do mês anterior
-6. Consolidar múltiplos gastos selecionados em um só
+5. Consolidar múltiplos gastos selecionados em um só
 
 ### Fora do escopo imediato (visão de futuro, depois da paridade com a web)
 - Gráficos de evolução mensal e comparação entre meses/anos
