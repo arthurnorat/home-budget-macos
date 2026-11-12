@@ -29,7 +29,7 @@ Unlike the iOS and Android companion apps, which only support quick expense entr
 
 ## Status
 
-In early development, built incrementally, one step at a time — see `docs/etapa-*.md` for the step-by-step build log.
+In development, built one step at a time. Each step has a study document in `docs/steps/` (written in Portuguese) explaining what was built and why.
 
 ---
 
@@ -60,4 +60,4 @@ Diferente dos apps companheiros iOS e Android, que servem apenas para lançament
 
 ## Status
 
-Em desenvolvimento inicial, construído de forma incremental, uma etapa por vez — veja `docs/etapa-*.md` para o histórico de construção etapa a etapa.
+Em desenvolvimento, construído uma etapa por vez. Cada etapa tem um documento de estudo em `docs/steps/` (em português) explicando o que foi construído e por quê.

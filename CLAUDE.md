@@ -1,73 +1,98 @@
 # HomeBudget macOS
 
-## Contexto do Projeto
+## Context
 
-App de controle de gastos domésticos compartilhado entre dois usuários. O sistema completo (backend em produção no Google Cloud Run + Firestore, frontend web no Vercel) é a fonte de verdade para controle e análise financeira.
+Household budget app shared between two users. The whole system (backend on Google Cloud Run + Firestore, web frontend on Vercel) is the source of truth for tracking and analyzing the budget.
 
-**Este é o cliente principal de análise do sistema.** Ao contrário do iOS e do Android — que existem só para lançamento rápido do gasto do dia a dia, sem navegação por mês nem edição — o macOS é onde o orçamento é efetivamente **analisado, organizado, estudado e planejado**. Por isso, num primeiro momento, sua interface espelha a versão web (mesmo modelo de dados, mesmas funcionalidades de controle), e depois cresce com funcionalidades de análise que a web ainda não tem.
+**This is the system's main analysis client.** The iOS and Android apps exist only for quick expense entry, with no month navigation or editing. The macOS app is where the budget is analyzed, organized and planned. Its first phase mirrors the web version (same data model, same features); later it grows with analysis features the web does not have.
 
-@import /Users/arthurnorat/Java_Projects/home-budget-api/CLAUDE.md
-@import /Users/arthurnorat/Web_Development_Projects/home-budget-app/CLAUDE.md
+The API contract and the web app's context are imported here:
 
-## Stack macOS
-- **Swift + SwiftUI** — interface declarativa
-- **URLSession** — chamadas HTTP (sem bibliotecas externas, mesma decisão do iOS)
-- **@Observable** — gerenciamento de estado (macOS 14+)
-- **Arquitetura:** MVVM simples (View + ViewModel + Service), mesmo padrão do iOS
-- **NavigationSplitView** — janela com sidebar, diferente da web (página única) e do iOS (tela única): já preparada para acomodar futuras seções de análise (Dashboard, Relatórios, etc.), mesmo que hoje só exista uma seção
+@/Users/arthurnorat/Java_Projects/home-budget-api/CLAUDE.md
+@/Users/arthurnorat/Web_Development_Projects/home-budget-app/CLAUDE.md
 
-## Relação com os outros clientes
-Este projeto **não compartilha código** com o iOS (nem Swift Package, nem cópia manual sincronizada). Cada cliente mantém sua própria cópia de Models/Helpers/Services, do mesmo jeito que o Android não compartilha código com o iOS — os dois tendem a divergir conforme o macOS ganha funcionalidades exclusivas de análise que os apps mobile nunca terão.
+## Stack
 
-## Princípio de Design
-Interface densa em informação, pensada para quem vai passar tempo estudando o orçamento (não para lançar um gasto e sair):
-- Fundo neutro, cards com borda sutil (mesma linguagem visual da web)
-- Tipografia sistema (SF Pro)
-- Janela com sidebar (`NavigationSplitView`) desde o início, para crescer sem precisar redesenhar a navegação depois
-- Ao contrário do iOS/Android, aqui a navegação por mês, edição de gastos e renda mensal são o núcleo do app — é exatamente o oposto do escopo mobile
+- **Swift + SwiftUI**, macOS, no external dependencies
+- **URLSession** for HTTP
+- **@Observable** for state
+- **NavigationSplitView**: window with a sidebar, ready for future analysis sections
 
-## Funcionalidades — Fase 1 (paridade com a web)
-1. Navegar por mês (mês atual, anterior, próximo)
-2. Listar gastos do mês, com filtro por categoria (Todos/Fixo/Variável)
-3. Criar, editar e excluir gasto
-4. Ver e editar a renda mensal, com resumo de metas 50/30/20 vs. totais reais por categoria
-5. Consolidar múltiplos gastos selecionados em um só
+## Architecture
 
-### Fora do escopo imediato (visão de futuro, depois da paridade com a web)
-- Gráficos de evolução mensal e comparação entre meses/anos
-- Metas de orçamento customizáveis por categoria (além do 50/30/20 fixo)
-- Relatórios exportáveis
-- Categorias além de Fixo/Variável
+Simple MVVM. The rules between layers:
 
-## Organização de Arquivos (planejada)
+- **Views** (`Views/`) only draw state and forward user actions. They never call `URLSession` or a Service and contain no business logic.
+- **ViewModels** (`ViewModels/`, `@Observable`) hold screen state, compute totals and orchestrate Services. They catch `AppError` and expose a user-facing message.
+- **Services** (`Services/`) do the HTTP calls through `APIClient` and throw only `AppError` (`throws(AppError)`).
+- **Models** (`Models/`) are plain values matching the API contract. Money is integer cents; dates are ISO strings.
+- **Helpers** (`Helpers/`) are pure functions (formatting and parsing).
+
+This project **shares no code** with the iOS app (no Swift Package, no synced copies). Each client keeps its own Models/Helpers/Services.
+
+## Project-specific rules
+
+These override the global rules, for this project only:
+
+- **Claude builds this app end to end.** Claude compiles, starts the local API, runs every verification case (including driving the UI) and commits. Arthur studies the result afterwards.
+- **Commits**: Claude commits one step at a time, straight to `main`, after the step is verified. **Never push**; Arthur pushes.
+- **Gradual construction and documentation still apply**: one small, verified step at a time, each with its study document in `docs/steps/` (Portuguese).
+- **UI text is in Portuguese** (for example `Category.displayName` returns "Fixo"/"Variável"). Identifiers, comments and commits stay in English.
+- **Write tests only against the local API** (`http://localhost:8080` with the Firestore emulator). Production receives `GET` requests only.
+
+## Design principle
+
+Information-dense interface for someone who will spend time studying the budget:
+
+- Neutral background, cards with a subtle border (same visual language as the web)
+- System typography (SF Pro) and native controls
+- Month navigation, expense editing and monthly income are the core of the app
+
+## Features — Phase 1 (web parity)
+
+1. Navigate by month (current, previous, next)
+2. List the month's expenses, filtered by category (All/Fixed/Variable)
+3. Create, edit and delete an expense
+4. See and edit the monthly income, with the 50/30/20 targets against real totals
+5. Consolidate several selected expenses into one
+
+### Later (after web parity)
+
+- Monthly evolution charts and month/year comparison
+- Custom budget targets per category
+- Exportable reports
+- Categories beyond Fixed/Variable
+
+## File organization
+
 ```
 HomeBudget/
-├── Models/
-│   ├── Category.swift
-│   ├── Expense.swift
-│   ├── ExpenseRequest.swift
-│   ├── MonthlyIncome.swift
-│   └── IncomeRequest.swift
-├── Helpers/
-│   └── Formatters.swift
-├── Services/
-│   ├── ExpenseService.swift
-│   └── IncomeService.swift
-├── ViewModels/
-│   └── DashboardViewModel.swift
+├── HomeBudgetApp.swift
+├── Models/        Category, Expense, ExpenseRequest, MonthlyIncome, IncomeRequest, AppError
+├── Helpers/       Formatters
+├── Services/      APIClient, ExpenseService, IncomeService
+├── ViewModels/    DashboardViewModel
 └── Views/
     ├── RootView.swift
-    ├── Dashboard/
-    │   ├── MonthNavigatorView.swift
-    │   ├── ExpenseTableView.swift
-    │   ├── ExpenseRowView.swift
-    │   └── IncomeSummaryView.swift
-    └── ExpenseForm/
-        └── ExpenseFormView.swift
+    ├── Dashboard/     DashboardView, MonthNavigatorView, ExpenseTableView, IncomeSummaryView, ConsolidateView
+    └── ExpenseForm/   ExpenseFormView
+docs/steps/        step-XX-name.md, one study document per step
 ```
 
-## Construção Gradual
-Este projeto é construído uma etapa por vez, documentada em `docs/etapa-XX-nome.md` (objetivo → decisões explicadas com o "porquê" → verificação → conexão com a próxima etapa), no mesmo estilo didático usado no projeto iOS. Cada etapa é revisada e estudada antes de avançar para a próxima. **Apenas o usuário faz commits.**
+## Infrastructure
+
+The app itself has no infrastructure; it depends on the API's:
+
+- **Debug builds** call `http://localhost:8080` (local API + Firestore emulator).
+- **Release builds** call `https://home-budget-api-689350097433.southamerica-east1.run.app` (Cloud Run).
+- The base URL lives in `Services/APIClient.swift`. No environment variables, no secrets: the API has no authentication yet.
+- App Sandbox is on; the build setting `ENABLE_OUTGOING_NETWORK_CONNECTIONS` grants the network client entitlement.
+
+## Out of scope
+
+Besides the global defaults: the API and the other clients' repositories are read-only from here.
 
 ## Status
-Projeto Xcode criado e buildando (apenas arquivos padrão). Etapa 0 (contexto) concluída. Implementação dos arquivos customizados ainda não iniciada.
+
+Current: steps 01–03 done (Models, Formatters, Services). Building steps 04–11 towards web parity.
+Next: step-04 (`AppError` and `APIClient`).
