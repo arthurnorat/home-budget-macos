@@ -94,5 +94,5 @@ Besides the global defaults: the API and the other clients' repositories are rea
 
 ## Status
 
-Current: steps 01–03 done (Models, Formatters, Services). Building steps 04–11 towards web parity.
-Next: step-04 (`AppError` and `APIClient`).
+Current: step-11 done. Phase 1 (web parity) is complete: month navigation, expense table with filter, create/edit/delete, monthly income with the 50/30/20 summary and consolidation. Debug and Release builds verified.
+Next: Phase 2, the analysis features (start with monthly evolution charts). Known debts are listed at the end of [step-11](docs/steps/step-11-polish-release.md).
