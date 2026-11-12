@@ -38,3 +38,10 @@ Pods/
 
 # Claude Code local state
 .claude/
+
+# Secrets: environment files, keys and certificates
+.env*
+*.pem
+*.p12
+*.key
+*.mobileprovision
