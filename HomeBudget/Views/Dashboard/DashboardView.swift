@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The month screen. It decides which of the four states to show
-/// (loading, error, empty, content) and hosts the toolbar.
+/// The month screen. It decides which state to show (error, loading or
+/// content) and hosts the toolbar and the alert for failed actions.
 struct DashboardView: View {
     @Bindable var viewModel: DashboardViewModel
 
@@ -16,6 +16,11 @@ struct DashboardView: View {
             // cancelling the previous load if it is still running.
             .task(id: viewModel.month) {
                 await viewModel.load()
+            }
+            .alert("Não foi possível concluir", isPresented: isShowingActionError) {
+                Button("OK") {}
+            } message: {
+                Text(viewModel.actionError ?? "")
             }
     }
 
@@ -33,16 +38,18 @@ struct DashboardView: View {
             }
         } else if viewModel.isLoading && viewModel.expenses.isEmpty {
             ProgressView("Carregando…")
-        } else if viewModel.expenses.isEmpty {
-            ContentUnavailableView(
-                "Nenhum gasto registrado neste mês",
-                systemImage: "tray",
-                description: Text("Os gastos lançados em \(Formatters.displayMonth(viewModel.month)) aparecem aqui.")
-            )
         } else {
-            List(viewModel.expenses) { expense in
-                LabeledContent(expense.description, value: Formatters.currency(fromCents: expense.amount))
-            }
+            ExpenseTableView(viewModel: viewModel)
         }
+    }
+
+    /// The alert is shown while `actionError` has a message; dismissing it clears the message.
+    private var isShowingActionError: Binding<Bool> {
+        Binding(
+            get: { viewModel.actionError != nil },
+            set: { isPresented in
+                if !isPresented { viewModel.actionError = nil }
+            }
+        )
     }
 }
