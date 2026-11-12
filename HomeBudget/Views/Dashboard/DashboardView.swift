@@ -52,8 +52,12 @@ struct DashboardView: View {
         } else if viewModel.isLoading && viewModel.expenses.isEmpty {
             ProgressView("Carregando…")
         } else {
-            ExpenseTableView(viewModel: viewModel) { expense in
-                formTarget = .edit(expense)
+            VStack(spacing: 0) {
+                IncomeSummaryView(viewModel: viewModel)
+                Divider()
+                ExpenseTableView(viewModel: viewModel) { expense in
+                    formTarget = .edit(expense)
+                }
             }
         }
     }
