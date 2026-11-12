@@ -6,6 +6,8 @@ struct DashboardView: View {
     @Bindable var viewModel: DashboardViewModel
     /// The form being presented, if any: a new expense or an existing one.
     @State private var formTarget: ExpenseFormTarget?
+    /// The consolidation waiting for confirmation, if any.
+    @State private var consolidationDraft: ConsolidationDraft?
 
     var body: some View {
         content
@@ -24,6 +26,9 @@ struct DashboardView: View {
             }
             .sheet(item: $formTarget) { target in
                 ExpenseFormView(viewModel: viewModel, editing: target.expense)
+            }
+            .sheet(item: $consolidationDraft) { draft in
+                ConsolidateView(viewModel: viewModel, draft: draft)
             }
             // Runs on appear and again every time the month changes,
             // cancelling the previous load if it is still running.
@@ -55,9 +60,11 @@ struct DashboardView: View {
             VStack(spacing: 0) {
                 IncomeSummaryView(viewModel: viewModel)
                 Divider()
-                ExpenseTableView(viewModel: viewModel) { expense in
-                    formTarget = .edit(expense)
-                }
+                ExpenseTableView(
+                    viewModel: viewModel,
+                    onEdit: { expense in formTarget = .edit(expense) },
+                    onConsolidate: { consolidationDraft = viewModel.consolidationDraft }
+                )
             }
         }
     }

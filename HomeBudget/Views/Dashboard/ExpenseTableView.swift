@@ -5,6 +5,8 @@ struct ExpenseTableView: View {
     @Bindable var viewModel: DashboardViewModel
     /// Called when the user asks to edit an expense; the parent presents the form.
     let onEdit: (Expense) -> Void
+    /// Called when the user asks to consolidate the selected expenses.
+    let onConsolidate: () -> Void
 
     /// How the table is sorted. Clicking a column header changes it.
     @State private var sortOrder = [KeyPathComparator(\Expense.date, order: .reverse)]
@@ -50,6 +52,12 @@ struct ExpenseTableView: View {
                 .foregroundStyle(.secondary)
 
             Spacer()
+
+            Button("Consolidar", systemImage: "arrow.triangle.merge") {
+                onConsolidate()
+            }
+            .disabled(!viewModel.canConsolidate)
+            .help("Juntar os gastos selecionados em um só (selecione dois ou mais)")
 
             Button("Editar", systemImage: "pencil") {
                 if let expense = viewModel.selectedExpenses.first {
@@ -102,8 +110,20 @@ struct ExpenseTableView: View {
         }
         .contextMenu(forSelectionType: Expense.ID.self) { ids in
             if ids.count == 1, let expense = expense(in: ids) {
-                Button("Editar", systemImage: "pencil") {
+                Button("Consolidar", systemImage: "arrow.triangle.merge") {
+                onConsolidate()
+            }
+            .disabled(!viewModel.canConsolidate)
+            .help("Juntar os gastos selecionados em um só (selecione dois ou mais)")
+
+            Button("Editar", systemImage: "pencil") {
                     onEdit(expense)
+                }
+            }
+            if ids.count >= 2 {
+                Button("Consolidar", systemImage: "arrow.triangle.merge") {
+                    viewModel.selection = ids
+                    onConsolidate()
                 }
             }
             if !ids.isEmpty {

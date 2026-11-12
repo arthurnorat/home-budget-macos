@@ -27,12 +27,15 @@ enum CategoryFilter: String, CaseIterable, Identifiable {
 }
 
 /// What a consolidation would create, shown to the user before confirming.
-struct ConsolidationDraft: Equatable {
+struct ConsolidationDraft: Equatable, Identifiable {
     let description: String
     let amount: Int
     let date: String
     let category: Category
     let count: Int
+
+    /// Two drafts with the same content are the same draft.
+    var id: String { "\(count)|\(amount)|\(date)|\(description)" }
 }
 
 /// State and logic of the month dashboard: the selected month, its expenses
