@@ -4,6 +4,8 @@ import SwiftUI
 /// content) and hosts the toolbar and the alert for failed actions.
 struct DashboardView: View {
     @Bindable var viewModel: DashboardViewModel
+    /// The form being presented, if any: a new expense or an existing one.
+    @State private var formTarget: ExpenseFormTarget?
 
     var body: some View {
         content
@@ -11,6 +13,17 @@ struct DashboardView: View {
             .navigationTitle(viewModel.monthTitle)
             .toolbar {
                 MonthNavigatorView(viewModel: viewModel)
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Novo gasto", systemImage: "plus") {
+                        formTarget = .new
+                    }
+                    .keyboardShortcut("n", modifiers: .command)
+                    .help("Novo gasto (⌘N)")
+                }
+            }
+            .sheet(item: $formTarget) { target in
+                ExpenseFormView(viewModel: viewModel, editing: target.expense)
             }
             // Runs on appear and again every time the month changes,
             // cancelling the previous load if it is still running.
@@ -39,7 +52,9 @@ struct DashboardView: View {
         } else if viewModel.isLoading && viewModel.expenses.isEmpty {
             ProgressView("Carregando…")
         } else {
-            ExpenseTableView(viewModel: viewModel)
+            ExpenseTableView(viewModel: viewModel) { expense in
+                formTarget = .edit(expense)
+            }
         }
     }
 

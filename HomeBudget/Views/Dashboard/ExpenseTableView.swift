@@ -3,6 +3,8 @@ import SwiftUI
 /// The month's expenses: category filter, action buttons and a sortable table.
 struct ExpenseTableView: View {
     @Bindable var viewModel: DashboardViewModel
+    /// Called when the user asks to edit an expense; the parent presents the form.
+    let onEdit: (Expense) -> Void
 
     /// How the table is sorted. Clicking a column header changes it.
     @State private var sortOrder = [KeyPathComparator(\Expense.date, order: .reverse)]
@@ -49,6 +51,14 @@ struct ExpenseTableView: View {
 
             Spacer()
 
+            Button("Editar", systemImage: "pencil") {
+                if let expense = viewModel.selectedExpenses.first {
+                    onEdit(expense)
+                }
+            }
+            .disabled(viewModel.selection.count != 1)
+            .help("Editar o gasto selecionado (duplo clique)")
+
             Button("Excluir", systemImage: "trash", role: .destructive) {
                 pendingDeletion = viewModel.selection
             }
@@ -91,10 +101,20 @@ struct ExpenseTableView: View {
             .width(min: 110, ideal: 130, max: 180)
         }
         .contextMenu(forSelectionType: Expense.ID.self) { ids in
+            if ids.count == 1, let expense = expense(in: ids) {
+                Button("Editar", systemImage: "pencil") {
+                    onEdit(expense)
+                }
+            }
             if !ids.isEmpty {
                 Button("Excluir", systemImage: "trash", role: .destructive) {
                     pendingDeletion = ids
                 }
+            }
+        } primaryAction: { ids in
+            // Double click (or Return) on a row.
+            if ids.count == 1, let expense = expense(in: ids) {
+                onEdit(expense)
             }
         }
         // The Delete key and the Edit > Delete menu command.
@@ -123,6 +143,10 @@ struct ExpenseTableView: View {
                 description: Text("Há gastos neste mês em outra categoria.")
             )
         }
+    }
+
+    private func expense(in ids: Set<Expense.ID>) -> Expense? {
+        viewModel.expenses.first { ids.contains($0.id) }
     }
 
     // MARK: Deletion

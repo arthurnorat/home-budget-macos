@@ -94,6 +94,12 @@ final class DashboardViewModel {
     var variableTarget: Int { Self.share(of: income, percent: 30) }
     var investmentTarget: Int { Self.share(of: income, percent: 20) }
 
+    /// Date a new expense starts with: today, or the first day of the
+    /// month on screen when the user is looking at another month.
+    var defaultExpenseDate: Date {
+        isCurrentMonth ? Date() : (Formatters.date(fromISO: "\(month)-01") ?? Date())
+    }
+
     var canConsolidate: Bool { selectedExpenses.count >= 2 }
 
     /// Same rule as the web: summed amount, most recent date,

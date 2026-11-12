@@ -58,8 +58,22 @@ enum Formatters {
         monthKeyFormatter.string(from: date)
     }
 
+    static func date(fromISO iso: String) -> Date? {
+        isoDateFormatter.date(from: iso)
+    }
+
+    /// "1550" cents -> "15,50": the plain text a form field starts with when editing.
+    static func amountText(fromCents cents: Int) -> String {
+        String(format: "%d,%02d", cents / 100, cents % 100)
+    }
+
     static func parseAmountToCents(_ text: String) -> Int? {
-        let normalized = text.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")
+        var normalized = text.trimmingCharacters(in: .whitespaces)
+        // With a decimal comma, dots can only be thousands separators: "1.234,56".
+        if normalized.contains(",") {
+            normalized = normalized.replacingOccurrences(of: ".", with: "")
+        }
+        normalized = normalized.replacingOccurrences(of: ",", with: ".")
         guard let value = Double(normalized), value >= 0 else { return nil }
         return Int((value * 100).rounded())
     }
