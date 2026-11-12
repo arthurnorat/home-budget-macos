@@ -186,8 +186,10 @@ final class DashboardViewModel {
     // MARK: Expense actions
 
     /// Creates a new expense, or updates `editing` when it is given.
-    /// Returns `true` on success, so the form knows it can close.
-    func save(_ request: ExpenseRequest, editing: Expense? = nil) async -> Bool {
+    /// Returns `nil` on success, or the message the form should show.
+    /// The form is a sheet, and an alert of the screen behind it would only
+    /// appear after the sheet closes, so this error does not use `actionError`.
+    func save(_ request: ExpenseRequest, editing: Expense? = nil) async -> String? {
         do {
             let saved: Expense
             if let editing {
@@ -202,10 +204,9 @@ final class DashboardViewModel {
             } else {
                 selection.remove(saved.id)
             }
-            return true
+            return nil
         } catch {
-            actionError = error.userMessage
-            return false
+            return error.userMessage
         }
     }
 

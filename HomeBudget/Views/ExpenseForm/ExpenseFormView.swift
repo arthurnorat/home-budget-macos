@@ -32,6 +32,8 @@ struct ExpenseFormView: View {
     @State private var date: Date
     @State private var category: Category
     @State private var isSaving = false
+    /// Why the last attempt to save failed, shown inside the form.
+    @State private var errorMessage: String?
 
     init(viewModel: DashboardViewModel, editing: Expense?) {
         self.viewModel = viewModel
@@ -68,8 +70,15 @@ struct ExpenseFormView: View {
 
     var body: some View {
         Form {
-            Section(editing == nil ? "Novo gasto" : "Editar gasto") {
+            Section {
                 fields
+            } header: {
+                Text(editing == nil ? "Novo gasto" : "Editar gasto")
+            } footer: {
+                if let errorMessage {
+                    Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.red)
+                }
             }
         }
         .formStyle(.grouped)
@@ -121,8 +130,9 @@ struct ExpenseFormView: View {
             date: Formatters.isoDateString(from: date),
             category: category
         )
-        // On failure the view model shows the error and the form stays open.
-        if await viewModel.save(request, editing: editing) {
+        // On failure the form stays open with what was typed and shows why.
+        errorMessage = await viewModel.save(request, editing: editing)
+        if errorMessage == nil {
             dismiss()
         }
     }

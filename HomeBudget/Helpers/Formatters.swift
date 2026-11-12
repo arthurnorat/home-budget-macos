@@ -40,6 +40,15 @@ enum Formatters {
         return formatter
     }()
 
+    private static let amountFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale(identifier: "pt_BR")
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }()
+
     static func currency(fromCents cents: Int) -> String {
         let value = Decimal(cents) / 100
         return currencyFormatter.string(from: value as NSDecimalNumber) ?? "R$ 0,00"
@@ -62,9 +71,11 @@ enum Formatters {
         isoDateFormatter.date(from: iso)
     }
 
-    /// "1550" cents -> "15,50": the plain text a form field starts with when editing.
+    /// 123456 cents -> "1.234,56": the text a form field starts with when editing.
+    /// Same as `currency(fromCents:)` without the "R$", and `parseAmountToCents` reads it back.
     static func amountText(fromCents cents: Int) -> String {
-        String(format: "%d,%02d", cents / 100, cents % 100)
+        let value = Decimal(cents) / 100
+        return amountFormatter.string(from: value as NSDecimalNumber) ?? "0,00"
     }
 
     static func parseAmountToCents(_ text: String) -> Int? {

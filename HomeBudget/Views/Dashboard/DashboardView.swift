@@ -17,6 +17,15 @@ struct DashboardView: View {
                 MonthNavigatorView(viewModel: viewModel)
 
                 ToolbarItem(placement: .primaryAction) {
+                    Button("Atualizar", systemImage: "arrow.clockwise") {
+                        Task { await viewModel.load() }
+                    }
+                    .keyboardShortcut("r", modifiers: .command)
+                    .disabled(viewModel.isLoading)
+                    .help("Buscar os dados do mês novamente (⌘R)")
+                }
+
+                ToolbarItem(placement: .primaryAction) {
                     Button("Novo gasto", systemImage: "plus") {
                         formTarget = .new
                     }

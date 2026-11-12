@@ -56,7 +56,9 @@ Novo gasto no mês atual começa com a data de hoje. Em outro mês, começa no d
 
 ### O formulário só fecha se salvar
 
-`viewModel.save` devolve `Bool`. Com `true`, a sheet fecha. Com `false`, o alerta de erro aparece e a sheet **continua aberta com o que foi digitado**, para tentar de novo sem redigitar.
+`viewModel.save` devolve `String?`. Com `nil` (sucesso), a sheet fecha. Com uma mensagem, ela é mostrada em vermelho no rodapé do formulário e a sheet **continua aberta com o que foi digitado**, para tentar de novo sem redigitar.
+
+O erro aparece dentro do formulário, e não como alerta, por um motivo prático: no macOS os alertas de uma janela entram em fila atrás da sheet que já está aberta. A primeira versão deste step usava o alerta geral da tela, e ele só aparecia depois de cancelar o formulário (correção feita no [Step 11](step-11-polish-release.md)).
 
 ## Como o código funciona
 
@@ -77,7 +79,7 @@ Uma propriedade `@State var description` tem, por baixo, um armazenamento chamad
 - `map` em um opcional transforma o valor se ele existir: `editing.map { ... }` formata o valor do gasto, ou continua `nil`.
 - `flatMap` faz o mesmo quando a transformação também devolve opcional (`date(fromISO:)` pode falhar), evitando um opcional dentro de outro.
 
-`Formatters.amountText(fromCents: 4575)` devolve `"45,75"`: o texto puro, sem "R$", para o campo de edição.
+`Formatters.amountText(fromCents: 123456)` devolve `"1.234,56"`: o mesmo texto da moeda, sem o "R$", para o campo de edição. `parseAmountToCents` lê esse formato de volta, então abrir e salvar sem mexer preserva o valor.
 
 ### Validação
 

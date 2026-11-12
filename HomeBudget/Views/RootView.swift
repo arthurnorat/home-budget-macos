@@ -38,5 +38,7 @@ struct RootView: View {
                 DashboardView(viewModel: viewModel)
             }
         }
+        // Below this size the four summary cards and the table columns no longer fit.
+        .frame(minWidth: 860, minHeight: 520)
     }
 }

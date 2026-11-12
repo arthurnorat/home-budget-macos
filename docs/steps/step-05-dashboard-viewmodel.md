@@ -42,9 +42,11 @@ A API devolve o gasto criado ou atualizado, então a lista local é atualizada c
 
 Falhar ao **carregar** o mês deixa a tela sem conteúdo: o erro ocupa o lugar da tabela, com "Tentar novamente". Falhar em uma **ação** (salvar, excluir) não invalida o que já está na tela: o erro aparece como alerta e os dados continuam visíveis. Um único campo de erro obrigaria a tela a adivinhar qual dos dois casos é.
 
-### As ações devolvem `Bool`, não lançam erro
+### As ações não lançam erro para a View
 
-`save`, `saveIncome` e `consolidate` devolvem `true`/`false`. O erro em si já foi tratado dentro do ViewModel (virou `actionError`). O `Bool` existe só para o formulário saber se pode fechar. Assim nenhuma View precisa de `do`/`catch`, e a regra "a View não trata erro de rede" se mantém.
+`saveIncome` e `consolidate` devolvem `true`/`false`: o erro já foi tratado dentro do ViewModel (virou `actionError`) e o `Bool` só informa se deu certo. `save` devolve `String?`: `nil` em caso de sucesso, ou a mensagem de erro para o formulário exibir. A diferença existe porque o formulário é uma sheet, e um alerta da tela de trás só apareceria depois de a sheet fechar (o [Step 11](step-11-polish-release.md) conta como isso foi descoberto).
+
+Nos dois formatos, nenhuma View precisa de `do`/`catch`, e a regra "a View não trata erro de rede" se mantém: ela só mostra um texto que o ViewModel já preparou.
 
 ### Consolidar: criar primeiro, apagar depois
 
@@ -108,7 +110,7 @@ No `catch`, uma requisição **cancelada** não é tratada como erro: significa 
 ### Salvar um gasto
 
 ```swift
-func save(_ request: ExpenseRequest, editing: Expense? = nil) async -> Bool
+func save(_ request: ExpenseRequest, editing: Expense? = nil) async -> String?
 ```
 
 Um método para criar e editar: com `editing`, chama `update`; sem, chama `create`. Depois remove a versão antiga da lista (se havia) e insere a nova, **desde que a data pertença ao mês exibido** (`saved.date.hasPrefix(month)`). Editar um gasto de dezembro e mudar a data para janeiro faz ele sair da lista de dezembro, que é o esperado.
