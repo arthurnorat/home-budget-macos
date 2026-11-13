@@ -95,6 +95,12 @@ if errorMessage == nil {
 
 A mensagem aparece no rodapé da seção, com um `Label` (ícone + texto) em vermelho. Uma nova tentativa substitui a mensagem; um sucesso fecha a sheet.
 
+### Ícone do app
+
+O ícone é a mesma arte do app iOS (cifrão branco sobre verde), para os dois clientes serem reconhecidos como o mesmo produto. A arte do iOS é um quadrado de 1024 px sem transparência, porque o iOS recorta os cantos sozinho. No macOS o ícone precisa vir pronto: um quadrado arredondado de 824 px centralizado em uma tela de 1024 px, com margem transparente. Sem isso, o ícone apareceria maior que os vizinhos no Dock e com cantos retos.
+
+A partir dessa versão ajustada foram gerados os sete arquivos que o catálogo de assets pede (16, 32, 64, 128, 256, 512 e 1024 px), em `Assets.xcassets/AppIcon.appiconset/`. Cada tamanho em pontos tem uma versão 1x e outra 2x (para telas Retina), e alguns arquivos servem a dois lugares: o de 32 px é tanto "16 pt @2x" quanto "32 pt @1x".
+
 ## Verificação da Fase 1
 
 Conferido no app em Debug, contra a API local com o emulador do Firestore:
@@ -119,7 +125,6 @@ Não foi possível exercitar por automação, porque dependem do app em primeiro
 - **"1.234" sem vírgula** é lido como R$ 1,23 (ponto decimal), não como mil duzentos e trinta e quatro. O formato com vírgula não tem ambiguidade.
 - **Fuso horário.** A data padrão de um gasto novo é o "hoje" do Mac; `createdAt` vem do servidor em UTC e só é usado para desempate na ordenação.
 - **Textos da interface fixos em português**, direto no código, sem catálogo de localização.
-- **Sem ícone do app** (usa o padrão do sistema).
 - **Sem autenticação**, como o restante do sistema: quem tiver a URL da API lê e grava. Está previsto na Fase 3 da API.
 - **`.pbxproj` editado à mão** em uma linha (`ENABLE_OUTGOING_NETWORK_CONNECTIONS`), no [Step 06](step-06-window-shell.md).
 
